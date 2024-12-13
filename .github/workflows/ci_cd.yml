@@ -29,18 +29,22 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # 4. Configurar navegador y driver (Google Chrome y ChromeDriver)
-      - name: Set up ChromeDriver
-        uses: electronuserland/action-chromedriver@v1
-        with:
-          version: latest
-
-      - name: Install Chrome
+      # 4. Instalar Google Chrome
+      - name: Install Google Chrome
         run: |
           sudo apt-get update
           sudo apt-get install -y google-chrome-stable
 
-      # 5. Ejecutar las pruebas
+      # 5. Instalar ChromeDriver
+      - name: Install ChromeDriver
+        run: |
+          CHROME_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+')
+          wget https://chromedriver.storage.googleapis.com/$CHROME_VERSION/chromedriver_linux64.zip
+          unzip chromedriver_linux64.zip
+          sudo mv chromedriver /usr/local/bin/
+          rm chromedriver_linux64.zip
+
+      # 6. Ejecutar las pruebas
       - name: Run tests
         run: |
           python run_tests.py
